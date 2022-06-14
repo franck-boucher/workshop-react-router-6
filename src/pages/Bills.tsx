@@ -1,7 +1,13 @@
-import { ActionIcon, Group, Stack } from "@mantine/core";
-import { Link, LoaderFunction, useFetcher, useParams } from "react-router-dom";
+import { ActionIcon, Alert, Anchor, Group, Stack, Text } from "@mantine/core";
+import {
+  Link,
+  LoaderFunction,
+  useFetcher,
+  useParams,
+  useRouteError,
+} from "react-router-dom";
 import { useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "tabler-icons-react";
+import { AlertCircle, ChevronLeft, ChevronRight } from "tabler-icons-react";
 import BillItem, { BillItemSkeleton } from "../components/BillItem";
 import Page from "../components/Page";
 import { Bill, getBillsForYear } from "../utils/bills";
@@ -13,7 +19,10 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 export default function Bills() {
   const params = useParams();
-  const year = Number(params.year);
+  const year = parseInt(params.year || "", 10);
+  if (isNaN(year)) {
+    throw new Error(`Invalid year: ${params.year}`);
+  }
 
   const { load, data, state } = useFetcher<Bill[]>();
 
@@ -43,3 +52,22 @@ export default function Bills() {
     </Page>
   );
 }
+
+const currentYear = new Date().getFullYear();
+
+export const ErrorBoundary = () => {
+  const error = useRouteError();
+  return (
+    <Alert
+      icon={<AlertCircle />}
+      title={<Text>{`Erreur`}</Text>}
+      color="red"
+      variant="outline"
+    >
+      <Text mb="lg">{error.message}</Text>
+      <Anchor component={Link} to={`/bills/${currentYear}`} replace>
+        Go to bills of year {currentYear}
+      </Anchor>
+    </Alert>
+  );
+};

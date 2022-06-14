@@ -3,8 +3,12 @@ import NewTaskButton from "./components/NewTaskButton";
 import TaskForm, {
   loader as taskFormLoader,
   action as taskFormAction,
+  ErrorBoundary as TaskFormErrorBoundary,
 } from "./components/TaskForm";
-import Bills, { loader as billsLoader } from "./pages/Bills";
+import Bills, {
+  loader as billsLoader,
+  ErrorBoundary as BillsErrorBoundary,
+} from "./pages/Bills";
 import Home from "./pages/Home";
 import Root, { loader as rootLoader } from "./pages/Root";
 import Tasks, { loader as tasksLoader } from "./pages/Tasks";
@@ -33,6 +37,7 @@ function App() {
             element={<TaskForm />}
             loader={taskFormLoader}
             action={taskFormAction}
+            errorElement={<TaskFormErrorBoundary />}
           />
         </Route>
         <Route
@@ -46,7 +51,11 @@ function App() {
             index
             element={<Navigate to={`/bills/${currentYear}`} replace />}
           />
-          <Route path=":year" element={<Bills />} />
+          <Route
+            path=":year"
+            element={<Bills />}
+            errorElement={<BillsErrorBoundary />}
+          />
         </Route>
         <Route path="loaders">
           <Route path="bills/:year" loader={billsLoader} />

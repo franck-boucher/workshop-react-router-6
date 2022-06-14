@@ -7,6 +7,8 @@ import {
   Button,
   TextInput,
   ActionIcon,
+  Alert,
+  Text,
 } from "@mantine/core";
 import {
   ActionFunction,
@@ -15,7 +17,10 @@ import {
   LoaderFunction,
   redirect,
   useLoaderData,
+  useNavigate,
+  useRouteError,
 } from "react-router-dom";
+import { AlertCircle } from "tabler-icons-react";
 import { createTask, deleteTask, editTask, getTask } from "../utils/tasks";
 
 type LoaderData = {
@@ -27,6 +32,10 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   if (params.taskId) {
     const task = await getTask(params.taskId);
+    if (!task)
+      throw new Response(`Task with id '${params.taskId}' not found.`, {
+        status: 404,
+      });
     return { task };
   }
   return { task: null };
@@ -100,3 +109,20 @@ export default function TaskForm() {
     </Paper>
   );
 }
+
+export const ErrorBoundary = () => {
+  const navigate = useNavigate();
+  const error = useRouteError();
+  return (
+    <Alert
+      icon={<AlertCircle />}
+      title={<Text>{`Erreur ${error.status}`}</Text>}
+      color="red"
+      variant="outline"
+      withCloseButton
+      onClose={() => navigate("/tasks", { replace: true })}
+    >
+      <Text>{error.data}</Text>
+    </Alert>
+  );
+};
