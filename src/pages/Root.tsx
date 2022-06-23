@@ -11,8 +11,10 @@ export type LoaderData = {
 };
 
 export const loader: LoaderFunction = async (): Promise<LoaderData> => {
-  const user = await getCurrentUser();
-  const tasksToValidate = await getNumberOfTasksToValidate();
+  const [user, tasksToValidate] = await Promise.all([
+    getCurrentUser(),
+    getNumberOfTasksToValidate(),
+  ]);
   return { user, tasksToValidate };
 };
 
