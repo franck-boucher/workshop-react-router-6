@@ -23,7 +23,7 @@ export default function SideMenu() {
         <Button
           component={Link}
           to="/tasks"
-          variant={location.pathname === "/tasks" ? "light" : "subtle"}
+          variant={location.pathname.match("/tasks") ? "light" : "subtle"}
           leftIcon={<Stack2 size={18} />}
         >
           Tasks
