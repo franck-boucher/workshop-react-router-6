@@ -20,7 +20,6 @@ export const loader: LoaderFunction = async (): Promise<LoaderData> => {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const taskId = formData.get("taskId") as string;
-  console.log({ taskId });
   if (taskId) await validateTask(taskId);
 };
 
